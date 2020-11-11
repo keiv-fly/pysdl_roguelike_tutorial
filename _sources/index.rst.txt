@@ -13,6 +13,7 @@ Content
    :maxdepth: 2
    :caption: Contents:
 
+   part0
 
 
 Indices and tables
