@@ -1,0 +1,319 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Part 1 - Drawing the ‘@’ symbol &mdash; PySDL2 Roguelike Tutorial 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Part 0 - Setting up" href="part00.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> PySDL2 Roguelike Tutorial
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="part00.html">Part 0 - Setting up</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Part 1 - Drawing the ‘&#64;’ symbol</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#code">Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#explanation">Explanation</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PySDL2 Roguelike Tutorial</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Part 1 - Drawing the ‘&#64;’ symbol</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/part01.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="part-1-drawing-the-symbol">
+<h1>Part 1 - Drawing the ‘&#64;’ symbol<a class="headerlink" href="#part-1-drawing-the-symbol" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="code">
+<h2>Code<a class="headerlink" href="#code" title="Permalink to this headline">¶</a></h2>
+<p>Write the following code into the <code class="docutils literal notranslate"><span class="pre">main.py</span></code> file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sdl2.ext</span>
+<span class="kn">from</span> <span class="nn">sdl2</span> <span class="kn">import</span> <span class="n">SDL_Color</span>
+
+
+<span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+
+<span class="n">screen_width</span> <span class="o">=</span> <span class="mi">640</span>
+<span class="n">screen_height</span> <span class="o">=</span> <span class="mi">480</span>
+
+<span class="n">window</span> <span class="o">=</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">Window</span><span class="p">(</span>
+    <span class="s2">&quot;PySDL2 Roguelike Tutorial&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">screen_width</span><span class="p">,</span> <span class="n">screen_height</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">window</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">renderer</span> <span class="o">=</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">Renderer</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
+
+<span class="n">fg</span> <span class="o">=</span> <span class="n">SDL_Color</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>
+<span class="n">bg</span> <span class="o">=</span> <span class="n">SDL_Color</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="n">font_manager</span> <span class="o">=</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">FontManager</span><span class="p">(</span>
+    <span class="n">font_path</span><span class="o">=</span><span class="s2">&quot;C:</span><span class="se">\\</span><span class="s2">Windows</span><span class="se">\\</span><span class="s2">Fonts</span><span class="se">\\</span><span class="s2">arial.ttf&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">fg</span><span class="p">,</span> <span class="n">bg_color</span><span class="o">=</span><span class="n">bg</span>
+<span class="p">)</span>
+
+<span class="n">factory</span> <span class="o">=</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">SpriteFactory</span><span class="p">(</span><span class="n">renderer</span><span class="o">=</span><span class="n">renderer</span><span class="p">)</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">from_text</span><span class="p">(</span><span class="s2">&quot;@&quot;</span><span class="p">,</span> <span class="n">fontmanager</span><span class="o">=</span><span class="n">font_manager</span><span class="p">)</span>
+
+<span class="n">x_offset</span> <span class="o">=</span> <span class="n">screen_width</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">text</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+<span class="n">y_offset</span> <span class="o">=</span> <span class="n">screen_height</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">text</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+<span class="n">renderer</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">dstrect</span><span class="o">=</span><span class="p">(</span><span class="n">x_offset</span><span class="p">,</span> <span class="n">y_offset</span><span class="p">,</span> <span class="n">text</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">text</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+<span class="n">renderer</span><span class="o">.</span><span class="n">present</span><span class="p">()</span>
+
+<span class="n">processor</span> <span class="o">=</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">TestEventProcessor</span><span class="p">()</span>
+<span class="n">processor</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Run the code using <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">main.py</span></code> and you will see the following picture</p>
+<img alt="_images/part01_1.png" src="_images/part01_1.png" />
+</div>
+<div class="section" id="explanation">
+<h2>Explanation<a class="headerlink" href="#explanation" title="Permalink to this headline">¶</a></h2>
+<p>Importing PySDL2 library</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sdl2.ext</span>
+<span class="kn">from</span> <span class="nn">sdl2</span> <span class="kn">import</span> <span class="n">SDL_Color</span>
+</pre></div>
+</div>
+<p>Setting the resolution of the window</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">screen_width</span> <span class="o">=</span> <span class="mi">640</span>
+<span class="n">screen_height</span> <span class="o">=</span> <span class="mi">480</span>
+</pre></div>
+</div>
+<p>Creating a window with a title and a specific size</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">window</span> <span class="o">=</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">Window</span><span class="p">(</span>
+    <span class="s2">&quot;PySDL2 Roguelike Tutorial&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">screen_width</span><span class="p">,</span> <span class="n">screen_height</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">window</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Create a renderer from the window variable</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">renderer</span> <span class="o">=</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">Renderer</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Foreground and background colors that will be used for outputting the character</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fg</span> <span class="o">=</span> <span class="n">SDL_Color</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>
+<span class="n">bg</span> <span class="o">=</span> <span class="n">SDL_Color</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Create a font manager with specific font and font size to be used in text outputting</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">font_manager</span> <span class="o">=</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">FontManager</span><span class="p">(</span>
+    <span class="n">font_path</span><span class="o">=</span><span class="s2">&quot;C:</span><span class="se">\\</span><span class="s2">Windows</span><span class="se">\\</span><span class="s2">Fonts</span><span class="se">\\</span><span class="s2">arial.ttf&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">fg</span><span class="p">,</span> <span class="n">bg_color</span><span class="o">=</span><span class="n">bg</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Create a sprite factory to then create a sprite from text</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">factory</span> <span class="o">=</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">SpriteFactory</span><span class="p">(</span><span class="n">renderer</span><span class="o">=</span><span class="n">renderer</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Create a sprite from text using a sprite factory</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">text</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">from_text</span><span class="p">(</span><span class="s2">&quot;@&quot;</span><span class="p">,</span> <span class="n">fontmanager</span><span class="o">=</span><span class="n">font_manager</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Calculate the top left corner of the text to output</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x_offset</span> <span class="o">=</span> <span class="n">screen_width</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">text</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+<span class="n">y_offset</span> <span class="o">=</span> <span class="n">screen_height</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">text</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+</pre></div>
+</div>
+<p>Output the text in a window</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">renderer</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">dstrect</span><span class="o">=</span><span class="p">(</span><span class="n">x_offset</span><span class="p">,</span> <span class="n">y_offset</span><span class="p">,</span> <span class="n">text</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">text</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+</pre></div>
+</div>
+<p>Here all changes that were previously made will become visible. SDL2 first saves the changes that should be made to the screen and then with this command shows the changes</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">renderer</span><span class="o">.</span><span class="n">present</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Process the events so that the windows does not freeze and waits for it to be closed</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">processor</span> <span class="o">=</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">TestEventProcessor</span><span class="p">()</span>
+<span class="n">processor</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="part00.html" class="btn btn-neutral float-left" title="Part 0 - Setting up" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, keiv-fly
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
