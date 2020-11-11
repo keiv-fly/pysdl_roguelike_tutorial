@@ -47,7 +47,7 @@ Write the following code into the ``main.py`` file:
 
 Run the code using ``python main.py`` and you will see the following picture
 
-.. image:: images/part01_1.png
+.. image:: _images/part01_1.png
 
 Explanation
 ------------
