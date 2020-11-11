@@ -1,20 +1,11 @@
-.. pysdl_roguelike_tutorial documentation master file, created by
-   sphinx-quickstart on Wed Nov 11 12:57:59 2020.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 PySDL2 Roguelike Tutorial
 ====================================================
 
-Content
-------------
+The tutorial uses Python 3 and PySDL2 and is based on `Roguelike Tutorial in Python 3 and TCOD <http://rogueliketutorials.com/tutorials/tcod/v2/>`_
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Contents:
 
-
-
-Indices and tables
-==================
-
+   part00
+   part01
