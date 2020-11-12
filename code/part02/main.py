@@ -24,7 +24,6 @@ def run():
     )
     window.show()
 
-    # create renderer
     renderer = sdl2.ext.Renderer(window)
 
     fg = SDL_Color(255, 255, 255)
@@ -36,8 +35,7 @@ def run():
         color=fg,
         bg_color=bg,
     )
-    factory = sdl2.ext.SpriteFactory(renderer=renderer)  # Creating Sprite Factory
-    # Creating TextureSprite from Text
+    factory = sdl2.ext.SpriteFactory(renderer=renderer)
     text = factory.from_text("@", fontmanager=font_manager)
 
     x_offset = player_x - text.size[0] // 2
@@ -52,12 +50,9 @@ def run():
         events = sdl2.ext.get_events()
         for event in events:
             action = None
-            # print("yes")
-            # print(event)
             if event.type == sdl2.SDL_QUIT:
                 action = EscapeAction()
             elif event.type == sdl2.SDL_KEYDOWN:
-                # print(event.key.keysym.sym)
                 if event.key.keysym.sym == sdl2.SDLK_UP:
                     action = MovementAction(dx=0, dy=-1)
                 elif event.key.keysym.sym == sdl2.SDLK_DOWN:
