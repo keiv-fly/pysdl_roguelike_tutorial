@@ -33,3 +33,5 @@ renderer.present()
 
 processor = sdl2.ext.TestEventProcessor()
 processor.run(window)
+
+sdl2.ext.quit()

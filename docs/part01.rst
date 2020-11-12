@@ -44,6 +44,8 @@ Write the following code into the ``main.py`` file:
     processor = sdl2.ext.TestEventProcessor()
     processor.run(window)
 
+    sdl2.ext.quit()
+
 
 Run the code using ``python main.py`` and you will see the following picture
 
@@ -133,3 +135,9 @@ Process the events so that the windows does not freeze and waits for it to be cl
 
     processor = sdl2.ext.TestEventProcessor()
     processor.run(window)
+
+Clean up everything, once the application finishes
+
+.. code::
+
+    sdl2.ext.quit()

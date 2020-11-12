@@ -9,3 +9,4 @@ The tutorial uses Python 3 and PySDL2 and is based on `Roguelike Tutorial in Pyt
 
    part00
    part01
+   part02
