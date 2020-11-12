@@ -1,4 +1,13 @@
 {
     "restructuredtext.confPath": "${workspaceFolder}\\docs",
-    "python.pythonPath": "c:\\Users\\serge\\anaconda3\\envs\\sdl\\python.exe"
+    "python.pythonPath": "c:\\Users\\serge\\anaconda3\\envs\\sdl\\python.exe",
+    "spellright.language": [
+        "en"
+    ],
+    "spellright.documentTypes": [
+        "markdown",
+        "latex",
+        "plaintext",
+        "restructuredtext"
+    ]
 }

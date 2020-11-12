@@ -12,7 +12,6 @@ window = sdl2.ext.Window(
 )
 window.show()
 
-# create renderer
 renderer = sdl2.ext.Renderer(window)
 
 fg = SDL_Color(255, 255, 255)
