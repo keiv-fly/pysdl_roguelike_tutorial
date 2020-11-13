@@ -1,0 +1,468 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Part 3 - The generic Entity, the Engine and the render function &mdash; PySDL2 Roguelike Tutorial 0.0.2 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Part 2 - Moving ‘@’ around the screen" href="part02.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> PySDL2 Roguelike Tutorial
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="part00.html">Part 0 - Setting up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part01.html">Part 1 - Drawing the ‘&#64;’ symbol</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part02.html">Part 2 - Moving ‘&#64;’ around the screen</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Part 3 - The generic Entity, the Engine and the render function</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#action-py">action.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#input-handlers-py">input_handlers.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#entity-py">entity.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#engine-py">engine.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main-py">main.py</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PySDL2 Roguelike Tutorial</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Part 3 - The generic Entity, the Engine and the render function</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/part03.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="part-3-the-generic-entity-the-engine-and-the-render-function">
+<h1>Part 3 - The generic Entity, the Engine and the render function<a class="headerlink" href="#part-3-the-generic-entity-the-engine-and-the-render-function" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="action-py">
+<h2>action.py<a class="headerlink" href="#action-py" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">action.py</span></code> file remains the same:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Action</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">EscapeAction</span><span class="p">(</span><span class="n">Action</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">MovementAction</span><span class="p">(</span><span class="n">Action</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dy</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dx</span> <span class="o">=</span> <span class="n">dx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dy</span> <span class="o">=</span> <span class="n">dy</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="input-handlers-py">
+<h2>input_handlers.py<a class="headerlink" href="#input-handlers-py" title="Permalink to this headline">¶</a></h2>
+<p>Event handling is moved to <code class="docutils literal notranslate"><span class="pre">input_handlers.py</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sdl2</span>
+
+<span class="kn">from</span> <span class="nn">actions</span> <span class="kn">import</span> <span class="n">Action</span><span class="p">,</span> <span class="n">EscapeAction</span><span class="p">,</span> <span class="n">MovementAction</span>
+
+
+<span class="k">def</span> <span class="nf">event_handler</span><span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">SDL_QUIT</span><span class="p">:</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">EscapeAction</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">SDL_KEYDOWN</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">keysym</span><span class="o">.</span><span class="n">sym</span> <span class="o">==</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">SDLK_UP</span><span class="p">:</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">MovementAction</span><span class="p">(</span><span class="n">dx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dy</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">keysym</span><span class="o">.</span><span class="n">sym</span> <span class="o">==</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">SDLK_DOWN</span><span class="p">:</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">MovementAction</span><span class="p">(</span><span class="n">dx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dy</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">keysym</span><span class="o">.</span><span class="n">sym</span> <span class="o">==</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">SDLK_LEFT</span><span class="p">:</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">MovementAction</span><span class="p">(</span><span class="n">dx</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">dy</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">keysym</span><span class="o">.</span><span class="n">sym</span> <span class="o">==</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">SDLK_RIGHT</span><span class="p">:</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">MovementAction</span><span class="p">(</span><span class="n">dx</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dy</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">keysym</span><span class="o">.</span><span class="n">sym</span> <span class="o">==</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">SDLK_ESCAPE</span><span class="p">:</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">EscapeAction</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">action</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="entity-py">
+<h2>entity.py<a class="headerlink" href="#entity-py" title="Permalink to this headline">¶</a></h2>
+<p>A new file is created for players, npcs, enemies, items - <code class="docutils literal notranslate"><span class="pre">entity.py</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span> <span class="nn">sdl2.ext</span>
+
+
+<span class="k">class</span> <span class="nc">Entity</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A generic object to represent players, enemies, items, etc.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">char</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">color</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+        <span class="n">renderer</span><span class="p">,</span>
+        <span class="n">font_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+        <span class="n">tile_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">char</span> <span class="o">=</span> <span class="n">char</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">Color</span><span class="p">(</span><span class="o">*</span><span class="n">color</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">font_size</span> <span class="o">=</span> <span class="n">font_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bg_color</span> <span class="o">=</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">Color</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span> <span class="o">=</span> <span class="n">tile_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">renderer</span> <span class="o">=</span> <span class="n">renderer</span>
+
+        <span class="n">font_manager</span> <span class="o">=</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">FontManager</span><span class="p">(</span>
+            <span class="n">font_path</span><span class="o">=</span><span class="s2">&quot;C:</span><span class="se">\\</span><span class="s2">Windows</span><span class="se">\\</span><span class="s2">Fonts</span><span class="se">\\</span><span class="s2">arial.ttf&quot;</span><span class="p">,</span>
+            <span class="n">size</span><span class="o">=</span><span class="n">font_size</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span>
+            <span class="n">bg_color</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bg_color</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">factory</span> <span class="o">=</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">SpriteFactory</span><span class="p">(</span><span class="n">renderer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">renderer</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">from_text</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">char</span><span class="p">,</span> <span class="n">fontmanager</span><span class="o">=</span><span class="n">font_manager</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_offset</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_offset</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text_width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pixel_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_offset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pixel_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_offset</span>
+
+    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dy</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">+=</span> <span class="n">dx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">+=</span> <span class="n">dy</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pixel_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_offset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pixel_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_offset</span>
+</pre></div>
+</div>
+<p>In more detail:</p>
+<p>Tile coordinates of the entity:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+</pre></div>
+</div>
+<p>Character and color for the character:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">char</span> <span class="o">=</span> <span class="n">char</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">Color</span><span class="p">(</span><span class="o">*</span><span class="n">color</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Creation of the text sprite:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">font_manager</span> <span class="o">=</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">FontManager</span><span class="p">(</span>
+    <span class="n">font_path</span><span class="o">=</span><span class="s2">&quot;C:</span><span class="se">\\</span><span class="s2">Windows</span><span class="se">\\</span><span class="s2">Fonts</span><span class="se">\\</span><span class="s2">arial.ttf&quot;</span><span class="p">,</span>
+    <span class="n">size</span><span class="o">=</span><span class="n">font_size</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span>
+    <span class="n">bg_color</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bg_color</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">factory</span> <span class="o">=</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">SpriteFactory</span><span class="p">(</span><span class="n">renderer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">renderer</span><span class="p">)</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">from_text</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">char</span><span class="p">,</span> <span class="n">fontmanager</span><span class="o">=</span><span class="n">font_manager</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Calculation of the pixel values: position, sprite offset, pixel text width and height:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">x_offset</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">y_offset</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">text_width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">text_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="bp">self</span><span class="o">.</span><span class="n">pixel_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_offset</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">pixel_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_offset</span>
+</pre></div>
+</div>
+<p>In the move function:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dy</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</pre></div>
+</div>
+<p>first the tile coordinates are updated:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">+=</span> <span class="n">dx</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">+=</span> <span class="n">dy</span>
+</pre></div>
+</div>
+<p>then the pixel coordinates are updated:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">pixel_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_offset</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">pixel_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_offset</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="engine-py">
+<h2>engine.py<a class="headerlink" href="#engine-py" title="Permalink to this headline">¶</a></h2>
+<p>The logic for handling events and rendering is moved to <code class="docutils literal notranslate"><span class="pre">engine.py</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span>
+
+<span class="kn">import</span> <span class="nn">sdl2.ext</span>
+
+<span class="kn">from</span> <span class="nn">actions</span> <span class="kn">import</span> <span class="n">EscapeAction</span><span class="p">,</span> <span class="n">MovementAction</span>
+<span class="kn">from</span> <span class="nn">entity</span> <span class="kn">import</span> <span class="n">Entity</span>
+<span class="kn">from</span> <span class="nn">input_handlers</span> <span class="kn">import</span> <span class="n">event_handler</span>
+
+
+<span class="n">BLACK</span> <span class="o">=</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">Color</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Engine</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Entity</span><span class="p">],</span> <span class="n">player</span><span class="p">:</span> <span class="n">Entity</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entities</span> <span class="o">=</span> <span class="n">entities</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_handler</span> <span class="o">=</span> <span class="n">event_handler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">player</span> <span class="o">=</span> <span class="n">player</span>
+
+    <span class="k">def</span> <span class="nf">handle_events</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">events</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">event_handler</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">action</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">MovementAction</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">player</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">dx</span><span class="o">=</span><span class="n">action</span><span class="o">.</span><span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="o">=</span><span class="n">action</span><span class="o">.</span><span class="n">dy</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">EscapeAction</span><span class="p">):</span>
+                <span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">renderer</span><span class="p">,</span> <span class="n">screen_width</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">screen_height</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">:</span>
+            <span class="n">renderer</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span>
+                <span class="n">entity</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
+                <span class="n">dstrect</span><span class="o">=</span><span class="p">(</span>
+                    <span class="n">entity</span><span class="o">.</span><span class="n">pixel_x</span> <span class="o">+</span> <span class="n">screen_width</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span>
+                    <span class="n">entity</span><span class="o">.</span><span class="n">pixel_y</span> <span class="o">+</span> <span class="n">screen_height</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span>
+                    <span class="n">entity</span><span class="o">.</span><span class="n">text_width</span><span class="p">,</span>
+                    <span class="n">entity</span><span class="o">.</span><span class="n">text_height</span><span class="p">,</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
+
+        <span class="n">renderer</span><span class="o">.</span><span class="n">present</span><span class="p">()</span>
+
+        <span class="n">renderer</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">BLACK</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="main-py">
+<h2>main.py<a class="headerlink" href="#main-py" title="Permalink to this headline">¶</a></h2>
+<p>And the <code class="docutils literal notranslate"><span class="pre">main.py</span></code> file now is very small:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sdl2</span>
+<span class="kn">import</span> <span class="nn">sdl2.ext</span>
+
+
+<span class="kn">from</span> <span class="nn">entity</span> <span class="kn">import</span> <span class="n">Entity</span>
+<span class="kn">from</span> <span class="nn">engine</span> <span class="kn">import</span> <span class="n">Engine</span>
+
+
+<span class="k">def</span> <span class="nf">run</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+
+    <span class="n">screen_width</span> <span class="o">=</span> <span class="mi">640</span>
+    <span class="n">screen_height</span> <span class="o">=</span> <span class="mi">480</span>
+
+    <span class="n">window</span> <span class="o">=</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">Window</span><span class="p">(</span>
+        <span class="s2">&quot;PySDL2 Roguelike Tutorial&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">screen_width</span><span class="p">,</span> <span class="n">screen_height</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="n">renderer</span> <span class="o">=</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">Renderer</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
+
+    <span class="n">player</span> <span class="o">=</span> <span class="n">Entity</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;@&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="n">renderer</span><span class="p">)</span>
+    <span class="n">npc</span> <span class="o">=</span> <span class="n">Entity</span><span class="p">(</span><span class="mi">0</span> <span class="o">-</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;@&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">renderer</span><span class="p">)</span>
+    <span class="n">entities</span> <span class="o">=</span> <span class="p">[</span><span class="n">npc</span><span class="p">,</span> <span class="n">player</span><span class="p">]</span>
+
+    <span class="n">engine</span> <span class="o">=</span> <span class="n">Engine</span><span class="p">(</span><span class="n">entities</span><span class="o">=</span><span class="n">entities</span><span class="p">,</span> <span class="n">player</span><span class="o">=</span><span class="n">player</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">engine</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">renderer</span><span class="p">,</span> <span class="n">screen_width</span><span class="p">,</span> <span class="n">screen_height</span><span class="p">)</span>
+
+        <span class="n">events</span> <span class="o">=</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">get_events</span><span class="p">()</span>
+
+        <span class="n">engine</span><span class="o">.</span><span class="n">handle_events</span><span class="p">(</span><span class="n">events</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="part02.html" class="btn btn-neutral float-left" title="Part 2 - Moving ‘@’ around the screen" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, keiv-fly
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

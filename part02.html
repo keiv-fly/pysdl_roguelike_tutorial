@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Moving ‘@’ around the screen &mdash; PySDL2 Roguelike Tutorial 0.0.2 documentation</title>
+  <title>Part 2 - Moving ‘@’ around the screen &mdash; PySDL2 Roguelike Tutorial 0.0.2 documentation</title>
   
 
   
@@ -36,6 +36,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Part 3 - The generic Entity, the Engine and the render function" href="part03.html" />
     <link rel="prev" title="Part 1 - Drawing the ‘@’ symbol" href="part01.html" /> 
 </head>
 
@@ -85,7 +86,16 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="part00.html">Part 0 - Setting up</a></li>
 <li class="toctree-l1"><a class="reference internal" href="part01.html">Part 1 - Drawing the ‘&#64;’ symbol</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Moving ‘&#64;’ around the screen</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Part 2 - Moving ‘&#64;’ around the screen</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#explanation">Explanation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#full-code-of-all-files">Full code of all files</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#actions-py">actions.py</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#main-py">main.py</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="part03.html">Part 3 - The generic Entity, the Engine and the render function</a></li>
 </ul>
 
             
@@ -132,7 +142,7 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Moving ‘&#64;’ around the screen</li>
+      <li>Part 2 - Moving ‘&#64;’ around the screen</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -151,8 +161,284 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="moving-around-the-screen">
-<h1>Moving ‘&#64;’ around the screen<a class="headerlink" href="#moving-around-the-screen" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="part-2-moving-around-the-screen">
+<h1>Part 2 - Moving ‘&#64;’ around the screen<a class="headerlink" href="#part-2-moving-around-the-screen" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="explanation">
+<h2>Explanation<a class="headerlink" href="#explanation" title="Permalink to this headline">¶</a></h2>
+<p>In this part we will be able to move the <code class="docutils literal notranslate"><span class="pre">&#64;</span></code> around the screen. Like <a class="reference external" href="http://rogueliketutorials.com/tutorials/tcod/v2/">Roguelike Tutorial in Python 3 and TCOD</a> we will also add an Action class.</p>
+<p>Add this to the <code class="docutils literal notranslate"><span class="pre">actions.py</span></code> file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Action</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">EscapeAction</span><span class="p">(</span><span class="n">Action</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">MovementAction</span><span class="p">(</span><span class="n">Action</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dy</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dx</span> <span class="o">=</span> <span class="n">dx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dy</span> <span class="o">=</span> <span class="n">dy</span>
+</pre></div>
+</div>
+<p>Here we have different classes depending on the action that we need to perform. All classes are inherited from Action.</p>
+<p>Now let’s change the <code class="docutils literal notranslate"><span class="pre">main.py</span></code> file to allow moving of the <code class="docutils literal notranslate"><span class="pre">&#64;</span></code> character:</p>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><span class="gi">+import sdl2</span>
+import sdl2.ext
+from sdl2 import SDL_Color
+
+<span class="gi">+from actions import Action, EscapeAction, MovementAction</span>
+</pre></div>
+</div>
+<p>We need the sdl2 library to later import the key codes to identify specific keys. We also added the actions from the <code class="docutils literal notranslate"><span class="pre">actions.py</span></code> file.</p>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><span class="gi">+def run():</span>
+    sdl2.ext.init()
+
+    screen_width = 640
+    screen_height = 480
+
+    +BLACK = SDL_Color(0, 0, 0)
+
+    +tile_size = 20
+    +player_font_size = 20
+
+    +player_x = screen_width // 2
+    +player_y = screen_height // 2
+
+    window = sdl2.ext.Window(
+        &quot;PySDL2 Roguelike Tutorial&quot;, size=(screen_width, screen_height)
+    )
+</pre></div>
+</div>
+<p>Here we wrapped the code into a run() function to make the code more structured. We also added a definition of the black color. We need the tile_size to calculate the jumps for the <code class="docutils literal notranslate"><span class="pre">&#64;</span></code> character. In addition we also fixed the starting position of the <code class="docutils literal notranslate"><span class="pre">&#64;</span></code> that will later change depending on the keyboard input.</p>
+<p>In the following code we change the size of the font to be equal to a variable</p>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span>font_manager = sdl2.ext.FontManager(
+    font_path=&quot;C:\\Windows\\Fonts\\arial.ttf&quot;,
+    -size=16,
+    +size=player_font_size,
+    color=fg,
+    bg_color=bg,
+)
+factory = sdl2.ext.SpriteFactory(renderer=renderer)
+</pre></div>
+</div>
+<p>Now we insert the player coordinates into the calculation of the <code class="docutils literal notranslate"><span class="pre">&#64;</span></code> sprite rectangle.</p>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><span class="gd">-x_offset = screen_width // 2 - text.size[0] // 2</span>
+<span class="gd">-y_offset = screen_height // 2 - text.size[1] // 2</span>
+<span class="gi">+x_offset = player_x - text.size[0] // 2</span>
+<span class="gi">+y_offset = player_y - text.size[1] // 2</span>
+</pre></div>
+</div>
+<p>We also add a loop to process events. In our case it is the keyboard events that move the <code class="docutils literal notranslate"><span class="pre">&#64;</span></code>. The renderer.clear is needed to clear everything that was drawn in the previous iteration.</p>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><span class="gi">+while True:</span>
+<span class="gi">+    renderer.clear(BLACK)</span>
+     renderer.copy(text, dstrect=(x_offset, y_offset, text.size[0], text.size[1]))
+
+     renderer.present()
+</pre></div>
+</div>
+<p>Now we add the keyboard event processing loop:</p>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><span class="gi">+events = sdl2.ext.get_events()</span>
+<span class="gi">+for event in events:</span>
+<span class="gi">+    action = None</span>
+<span class="gi">+    if event.type == sdl2.SDL_QUIT:</span>
+<span class="gi">+       action = EscapeAction()</span>
+<span class="gi">+    elif event.type == sdl2.SDL_KEYDOWN:</span>
+<span class="gi">+        if event.key.keysym.sym == sdl2.SDLK_UP:</span>
+<span class="gi">+            action = MovementAction(dx=0, dy=-1)</span>
+<span class="gi">+        elif event.key.keysym.sym == sdl2.SDLK_DOWN:</span>
+<span class="gi">+            action = MovementAction(dx=0, dy=1)</span>
+<span class="gi">+        elif event.key.keysym.sym == sdl2.SDLK_LEFT:</span>
+<span class="gi">+            action = MovementAction(dx=-1, dy=0)</span>
+<span class="gi">+        elif event.key.keysym.sym == sdl2.SDLK_RIGHT:</span>
+<span class="gi">+            action = MovementAction(dx=1, dy=0)</span>
+<span class="gi">+        elif event.key.keysym.sym == sdl2.SDLK_ESCAPE:</span>
+<span class="gi">+            action = EscapeAction()</span>
+
+<span class="gi">+    if action is None:</span>
+<span class="gi">+        continue</span>
+
+<span class="gi">+    if isinstance(action, MovementAction):</span>
+<span class="gi">+        player_x += action.dx * tile_size</span>
+<span class="gi">+        player_y += action.dy * tile_size</span>
+<span class="gi">+        x_offset = player_x - text.size[0] // 2</span>
+<span class="gi">+        y_offset = player_y - text.size[1] // 2</span>
+
+<span class="gi">+    elif isinstance(action, EscapeAction):</span>
+<span class="gi">+        sdl2.ext.quit()</span>
+<span class="gi">+        raise SystemExit()</span>
+</pre></div>
+</div>
+<p>Let’s have a closer look at the lines.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">events</span> <span class="o">=</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">get_events</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Reads all the events that were accumulated by SDL2 from the previous call of this line.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="kc">None</span>
+</pre></div>
+</div>
+<p>Loops over all accumulated events and sets an empty action at the beginning of the loop</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">SDL_QUIT</span><span class="p">:</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="n">EscapeAction</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>If a quit signal was sent to the program (for example the close window button was clicked), then it is an EscapeAction</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">SDL_KEYDOWN</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">keysym</span><span class="o">.</span><span class="n">sym</span> <span class="o">==</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">SDLK_UP</span><span class="p">:</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">MovementAction</span><span class="p">(</span><span class="n">dx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dy</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">keysym</span><span class="o">.</span><span class="n">sym</span> <span class="o">==</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">SDLK_DOWN</span><span class="p">:</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">MovementAction</span><span class="p">(</span><span class="n">dx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dy</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">keysym</span><span class="o">.</span><span class="n">sym</span> <span class="o">==</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">SDLK_LEFT</span><span class="p">:</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">MovementAction</span><span class="p">(</span><span class="n">dx</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">dy</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">keysym</span><span class="o">.</span><span class="n">sym</span> <span class="o">==</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">SDLK_RIGHT</span><span class="p">:</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">MovementAction</span><span class="p">(</span><span class="n">dx</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dy</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here if the event was <code class="docutils literal notranslate"><span class="pre">keydown</span></code> event then we check what key was pressed. If the key is an arrow then it is a <code class="docutils literal notranslate"><span class="pre">MovementAction</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">keysym</span><span class="o">.</span><span class="n">sym</span> <span class="o">==</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">SDLK_ESCAPE</span><span class="p">:</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="n">EscapeAction</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>If the key was <code class="docutils literal notranslate"><span class="pre">Esc</span></code> then it is an EscapeAction.</p>
+<p>Now we process the actions depending on what action we have:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">action</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+     <span class="k">continue</span>
+</pre></div>
+</div>
+<p>If action is empty then check the next event</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">MovementAction</span><span class="p">):</span>
+    <span class="n">player_x</span> <span class="o">+=</span> <span class="n">action</span><span class="o">.</span><span class="n">dx</span> <span class="o">*</span> <span class="n">tile_size</span>
+    <span class="n">player_y</span> <span class="o">+=</span> <span class="n">action</span><span class="o">.</span><span class="n">dy</span> <span class="o">*</span> <span class="n">tile_size</span>
+    <span class="n">x_offset</span> <span class="o">=</span> <span class="n">player_x</span> <span class="o">-</span> <span class="n">text</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+    <span class="n">y_offset</span> <span class="o">=</span> <span class="n">player_y</span> <span class="o">-</span> <span class="n">text</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+</pre></div>
+</div>
+<p>Here if the action was a movement then we need to change the coordinates of the <code class="docutils literal notranslate"><span class="pre">&#64;</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">EscapeAction</span><span class="p">):</span>
+    <span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+    <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>If the action was EscapeAction, then shut down SDL2 and finish the program.</p>
+<p>Taking into account that we moved everything into <code class="docutils literal notranslate"><span class="pre">run()</span></code>, we need to execute <code class="docutils literal notranslate"><span class="pre">run()</span></code> when the file is executed with <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">main.py</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>After running this code with <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">main.py</span></code> we see the same picture as in Part 1 but we can move the <code class="docutils literal notranslate"><span class="pre">&#64;</span></code> with the keyboard keys</p>
+</div>
+<div class="section" id="full-code-of-all-files">
+<h2>Full code of all files<a class="headerlink" href="#full-code-of-all-files" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="actions-py">
+<h3>actions.py<a class="headerlink" href="#actions-py" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Action</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">EscapeAction</span><span class="p">(</span><span class="n">Action</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">MovementAction</span><span class="p">(</span><span class="n">Action</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dy</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dx</span> <span class="o">=</span> <span class="n">dx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dy</span> <span class="o">=</span> <span class="n">dy</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="main-py">
+<h3>main.py<a class="headerlink" href="#main-py" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sdl2</span>
+<span class="kn">import</span> <span class="nn">sdl2.ext</span>
+<span class="kn">from</span> <span class="nn">sdl2</span> <span class="kn">import</span> <span class="n">SDL_Color</span>
+
+<span class="kn">from</span> <span class="nn">actions</span> <span class="kn">import</span> <span class="n">Action</span><span class="p">,</span> <span class="n">EscapeAction</span><span class="p">,</span> <span class="n">MovementAction</span>
+
+
+<span class="k">def</span> <span class="nf">run</span><span class="p">():</span>
+    <span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+
+    <span class="n">screen_width</span> <span class="o">=</span> <span class="mi">640</span>
+    <span class="n">screen_height</span> <span class="o">=</span> <span class="mi">480</span>
+
+    <span class="n">BLACK</span> <span class="o">=</span> <span class="n">SDL_Color</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">tile_size</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="n">player_font_size</span> <span class="o">=</span> <span class="mi">20</span>
+
+    <span class="n">player_x</span> <span class="o">=</span> <span class="n">screen_width</span> <span class="o">//</span> <span class="mi">2</span>
+    <span class="n">player_y</span> <span class="o">=</span> <span class="n">screen_height</span> <span class="o">//</span> <span class="mi">2</span>
+
+    <span class="n">window</span> <span class="o">=</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">Window</span><span class="p">(</span>
+        <span class="s2">&quot;PySDL2 Roguelike Tutorial&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">screen_width</span><span class="p">,</span> <span class="n">screen_height</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="n">renderer</span> <span class="o">=</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">Renderer</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
+
+    <span class="n">fg</span> <span class="o">=</span> <span class="n">SDL_Color</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>
+    <span class="n">bg</span> <span class="o">=</span> <span class="n">SDL_Color</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">font_manager</span> <span class="o">=</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">FontManager</span><span class="p">(</span>
+        <span class="n">font_path</span><span class="o">=</span><span class="s2">&quot;C:</span><span class="se">\\</span><span class="s2">Windows</span><span class="se">\\</span><span class="s2">Fonts</span><span class="se">\\</span><span class="s2">arial.ttf&quot;</span><span class="p">,</span>
+        <span class="n">size</span><span class="o">=</span><span class="n">player_font_size</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="n">fg</span><span class="p">,</span>
+        <span class="n">bg_color</span><span class="o">=</span><span class="n">bg</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">factory</span> <span class="o">=</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">SpriteFactory</span><span class="p">(</span><span class="n">renderer</span><span class="o">=</span><span class="n">renderer</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">from_text</span><span class="p">(</span><span class="s2">&quot;@&quot;</span><span class="p">,</span> <span class="n">fontmanager</span><span class="o">=</span><span class="n">font_manager</span><span class="p">)</span>
+
+    <span class="n">x_offset</span> <span class="o">=</span> <span class="n">player_x</span> <span class="o">-</span> <span class="n">text</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+    <span class="n">y_offset</span> <span class="o">=</span> <span class="n">player_y</span> <span class="o">-</span> <span class="n">text</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">renderer</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">BLACK</span><span class="p">)</span>
+        <span class="n">renderer</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">dstrect</span><span class="o">=</span><span class="p">(</span><span class="n">x_offset</span><span class="p">,</span> <span class="n">y_offset</span><span class="p">,</span> <span class="n">text</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">text</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+        <span class="n">renderer</span><span class="o">.</span><span class="n">present</span><span class="p">()</span>
+
+        <span class="n">events</span> <span class="o">=</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">get_events</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">SDL_QUIT</span><span class="p">:</span>
+                <span class="n">action</span> <span class="o">=</span> <span class="n">EscapeAction</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">SDL_KEYDOWN</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">keysym</span><span class="o">.</span><span class="n">sym</span> <span class="o">==</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">SDLK_UP</span><span class="p">:</span>
+                    <span class="n">action</span> <span class="o">=</span> <span class="n">MovementAction</span><span class="p">(</span><span class="n">dx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dy</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">keysym</span><span class="o">.</span><span class="n">sym</span> <span class="o">==</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">SDLK_DOWN</span><span class="p">:</span>
+                    <span class="n">action</span> <span class="o">=</span> <span class="n">MovementAction</span><span class="p">(</span><span class="n">dx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dy</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">keysym</span><span class="o">.</span><span class="n">sym</span> <span class="o">==</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">SDLK_LEFT</span><span class="p">:</span>
+                    <span class="n">action</span> <span class="o">=</span> <span class="n">MovementAction</span><span class="p">(</span><span class="n">dx</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">dy</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">keysym</span><span class="o">.</span><span class="n">sym</span> <span class="o">==</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">SDLK_RIGHT</span><span class="p">:</span>
+                    <span class="n">action</span> <span class="o">=</span> <span class="n">MovementAction</span><span class="p">(</span><span class="n">dx</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dy</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">keysym</span><span class="o">.</span><span class="n">sym</span> <span class="o">==</span> <span class="n">sdl2</span><span class="o">.</span><span class="n">SDLK_ESCAPE</span><span class="p">:</span>
+                    <span class="n">action</span> <span class="o">=</span> <span class="n">EscapeAction</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">action</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">MovementAction</span><span class="p">):</span>
+                <span class="n">player_x</span> <span class="o">+=</span> <span class="n">action</span><span class="o">.</span><span class="n">dx</span> <span class="o">*</span> <span class="n">tile_size</span>
+                <span class="n">player_y</span> <span class="o">+=</span> <span class="n">action</span><span class="o">.</span><span class="n">dy</span> <span class="o">*</span> <span class="n">tile_size</span>
+                <span class="n">x_offset</span> <span class="o">=</span> <span class="n">player_x</span> <span class="o">-</span> <span class="n">text</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+                <span class="n">y_offset</span> <span class="o">=</span> <span class="n">player_y</span> <span class="o">-</span> <span class="n">text</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">EscapeAction</span><span class="p">):</span>
+                <span class="n">sdl2</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
 </div>
 
 
@@ -162,6 +448,8 @@
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="part03.html" class="btn btn-neutral float-right" title="Part 3 - The generic Entity, the Engine and the render function" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="part01.html" class="btn btn-neutral float-left" title="Part 1 - Drawing the ‘@’ symbol" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
